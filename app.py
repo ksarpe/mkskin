@@ -1,21 +1,24 @@
+CURRENT_VERSION = '1.0.0'
 # import os
 # os.environ["KCFG_KIVY_LOG_LEVEL"] = "critical"
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.label import Label
-from kivy.uix.scrollview import ScrollView
 from kivy.uix.textinput import TextInput
 
 from agregations.orders import get_orders
 from agregations.bills import get_ad_payments
 from tokens.tokens import fetch_tokens
-
+from helpers.updater import check_for_updates
+from helpers.checker import check_folders
 
 
 class App(App):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        check_folders()
+        check_for_updates(CURRENT_VERSION)
         self.BASE_OAUTH_URL = "https://allegro.pl/auth/oauth"
         self.API_BASE_URL = "https://api.allegro.pl"
         self.ACCESS_TOKEN, self.REFRESH_TOKEN = fetch_tokens(self.BASE_OAUTH_URL, self.API_BASE_URL)

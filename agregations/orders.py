@@ -68,9 +68,7 @@ def get_orders(ACCESS_TOKEN, API_BASE_URL, days_amount):
     
     df = pd.DataFrame(orders[::-1])
     df.to_excel("result/orders.xlsx", index=False)
-    print("Zapisano zamówienia do pliku orders.xlsx")
-    print("Otwieram plik...")
-    os.startfile("E:\\xampp\\htdocs\\allegroapp\\result\\orders.xlsx")
+    os.startfile(".\\result\\orders.xlsx")
 
 
 def check_quantity(price):

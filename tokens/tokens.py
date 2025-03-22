@@ -4,7 +4,7 @@ logging.getLogger("urllib3").setLevel(logging.CRITICAL)
 logging.getLogger("requests").setLevel(logging.CRITICAL)  
 import time
 
-from secrets import CLIENT_IDS, CLIENT_SECRETS
+from tokens.secrets import CLIENT_IDS, CLIENT_SECRETS
 
 CLIENT_ID = CLIENT_IDS
 CLIENT_SECRET = CLIENT_SECRETS
