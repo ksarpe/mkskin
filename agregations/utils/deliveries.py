@@ -1,0 +1,16 @@
+delivery_methods = {
+  '98f86f81-0018-41c5-ac83-073a56fc7021': 'InPost Pobranie',
+  '2488f7b7-5d1c-4d65-b85c-4cbcf253fd93': 'InPost',
+  '9081532b-5ad3-467d-80bc-9252982e9dd8': 'InPost',
+  '0b9bed2c-0bc1-4e1f-9694-29bb39ebb483': 'Allegro',
+  '0d83955a-4297-4169-adef-9790d53b11ff': 'Allegro',
+  '028e2be0-1c06-41cf-a309-ec5557273786': 'Poczta',
+  '093d950b-8497-4cc7-aa2a-6081e5e7e7e2': 'Poczta',
+  '09164667-daa5-42dc-8087-33d7485790ac': 'Orlen',
+  '025cb739-ef8e-45c4-9e7b-ce4e7fece8be': 'Orlen',
+  '259b5c7a-9056-4c74-80ec-8bdc50cb0413': 'DPD',
+  '0b257488-c85d-4507-b967-9b45ffbfa2e8': 'DPD',
+  'c3066682-97a3-42fe-9eb5-3beeccab840c': 'DPD',
+  'a3b4db98-4a70-4542-84ee-c642604d9d8a': 'DHL',
+  '07c12933-584e-453d-bee5-60f3f32dfc73': 'DHL',
+}

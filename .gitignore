@@ -1,0 +1,6 @@
+/dist
+/build
+*/__pycache__
+mkskin.spec
+/result
+/tokens/secrets.py
