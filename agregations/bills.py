@@ -7,7 +7,7 @@ def get_ad_payments(ACCESS_TOKEN, BASE_API_URL):
 
   today = datetime.datetime.now()
   start_of_month = today.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-  days_passed = (today - start_of_month).days + 1  # Dodajemy 1, aby uwzględnić dzisiejszy dzień
+  days_passed = (today - start_of_month).days  # Dodajemy 1, aby uwzględnić dzisiejszy dzień
   limit = days_passed
   
   headers = {
@@ -25,8 +25,10 @@ def get_ad_payments(ACCESS_TOKEN, BASE_API_URL):
         response.raise_for_status()
         data = response.json()
 
-        for entry in data.get('billingEntries', []):
+        for entry in reversed(data.get('billingEntries', [])):
           amount = entry['value']['amount']
+          date = entry['occurredAt'][:10]
+          f.write(date + ": ")
           f.write((amount.replace('.',',').replace('-','')) + "\n")
 
   except requests.exceptions.RequestException as e:

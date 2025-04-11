@@ -6,29 +6,43 @@ import os
 from agregations.utils.deliveries import delivery_methods
 from agregations.clients import check_existing_clients
 
-def get_orders(ACCESS_TOKEN, API_BASE_URL, days_amount):
+def get_orders(ACCESS_TOKEN, API_BASE_URL, days_amount=-1, year=-1, month=-1):
 
     url = f"{API_BASE_URL}/order/checkout-forms"
     date = datetime.datetime.now() - datetime.timedelta(days=days_amount)
     date = date.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
-    
+    date_from = datetime.datetime(year, month, 1)
+    if month == 12:
+        date_to = datetime.datetime(year + 1, 1, 1)
+    else:
+        date_to = datetime.datetime(year, month + 1, 1)
+    date_from_str = date_from.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+    date_to_str = date_to.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+
     orders = []
 
     headers = {
         "Authorization": f"Bearer {ACCESS_TOKEN}",
         "Accept": "application/vnd.allegro.public.v1+json"
     }
-    params = {
+    params_if_days = {
         "limit": 100,
         "lineItems.boughtAt.gte": date,
     }
+    params_if_year = {
+        "limit": 100,
+        "lineItems.boughtAt.gte": date_from_str,
+        "lineItems.boughtAt.lte": date_to_str,
+    }
 
     try:
-        response = requests.get(url, headers=headers, params=params)
+        response = requests.get(url, headers=headers, params=params_if_days if days_amount > 0 else params_if_year)
         response.raise_for_status()
         data = response.json()
 
         for event in data.get('checkoutForms', []):
+            if event["status"] == "CANCELLED":
+                continue
             date = event["payment"]["finishedAt"]
             date = datetime.datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.%fZ")
             date = date + datetime.timedelta(hours=1)
@@ -39,6 +53,7 @@ def get_orders(ACCESS_TOKEN, API_BASE_URL, days_amount):
                 delivery = delivery_methods[event["delivery"]["method"]["id"]] #event["delivery"]["method"]["id"]
             invoice = "TRUE" if event["invoice"]["required"] else "FALSE"
             existing_client = check_existing_clients(ACCESS_TOKEN, API_BASE_URL, event["buyer"]["login"])
+            login = event["buyer"]["login"]
             phone_number = event["buyer"]["phoneNumber"][3:]
             price = event["summary"]["totalToPay"]["amount"] #TODO: change in the future to get all items from the cart
             quantity = check_quantity(price)
@@ -51,14 +66,16 @@ def get_orders(ACCESS_TOKEN, API_BASE_URL, days_amount):
             "Dostawa": delivery,
             "Faktura?": invoice,
             "Istniejący klient?": existing_client,
+            "Login": login,
             "NR Telefonu": phone_number,
+            "SMS?": "TAK" if existing_client == "TAK" else "NIE",
             "Ilość": quantity,
             "Cena": price.replace(".", ","),
             "Smart?": smart,
             "X": "",
             "Y": "",
             "Z": "",
-            "Koszt Dostawy": deliveryCost,
+            "Koszt Dostawy": deliveryCost.replace(".", ","),
             })
         
     except requests.exceptions.RequestException as e:

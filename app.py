@@ -40,7 +40,7 @@ class App(App):
         layout.add_widget(btn_payments)
 
         btn_orders_layout = BoxLayout(size_hint=(1, 0.1))
-        self.textinput_orders = TextInput(text='', multiline=False, hint_text="X", size_hint=(0.1, 1))
+        self.textinput_orders = TextInput(text='', multiline=False, hint_text="1", size_hint=(0.1, 1))
         btn_orders = Button(
             text="Pobierz zamówienia z ostatnich X dni",
             size_hint=(0.9, 1),
@@ -50,6 +50,20 @@ class App(App):
         btn_orders_layout.add_widget(self.textinput_orders)
         btn_orders_layout.add_widget(btn_orders)
         layout.add_widget(btn_orders_layout)
+
+        btn_orders2_layout = BoxLayout(size_hint=(1, 0.1))
+        self.textinput_orders_year = TextInput(text='', multiline=False, hint_text="2025", size_hint=(0.1, 1))
+        self.textinput_orders_month = TextInput(text='', multiline=False, hint_text="3", size_hint=(0.1, 1))
+        btn_orders2 = Button(
+            text="Pobierz zamówienia z danego roku i numeru miesiąca)",
+            size_hint=(0.9, 1),
+            on_press=self.generate_buyer_report_monthly,
+            padding=10
+        )
+        btn_orders2_layout.add_widget(self.textinput_orders_year)
+        btn_orders2_layout.add_widget(self.textinput_orders_month)
+        btn_orders2_layout.add_widget(btn_orders2)
+        layout.add_widget(btn_orders2_layout)
 
         self.output_label = Label(
             text="Kliknij przycisk, aby wygenerować raport.", size_hint=(1, 0.6)
@@ -68,14 +82,29 @@ class App(App):
             self.output_label.text = "Nie podałeś z ilu dni mają być zamówienia."
             return
         
-        liczba_zamowien = int(text)
+        orders_from_day = int(text)
         try:
             self.output_label.text = "Generowanie raportów, proszę czekaj..."
-            get_orders(self.ACCESS_TOKEN, self.API_BASE_URL, liczba_zamowien)
-            self.output_label.text = f"Pomyślnie wygenerowano zamówienia z {liczba_zamowien} dni w pliku orders.xlsx."
+            get_orders(self.ACCESS_TOKEN, self.API_BASE_URL, orders_from_day)
+            self.output_label.text = f"Pomyślnie wygenerowano zamówienia z {orders_from_day} dni w pliku orders.xlsx."
         except Exception as e:
             self.output_label.text = f"Błąd podczas pobierania zamówień: {e}"
 
+    def generate_buyer_report_monthly(self, instance):
+        text = self.textinput_orders_year.text.strip()
+        text2 = self.textinput_orders_month.text.strip()
+        if not text.isdigit() or not text2.isdigit():
+            self.output_label.text = "Nie podałeś roku i miesiąca."
+            return
+        
+        orders_year = int(text)
+        orders_month = int(text2)
+        try:
+            self.output_label.text = "Generowanie raportów, proszę czekaj..."
+            get_orders(self.ACCESS_TOKEN, self.API_BASE_URL, year=orders_year, month=orders_month)
+            self.output_label.text = f"Pomyślnie wygenerowano zamówienia z {orders_year}/{orders_month} dni w pliku orders.xlsx."
+        except Exception as e:
+            self.output_label.text = f"Błąd podczas pobierania zamówień: {e}"
 
 if __name__ == "__main__":
     App().run()

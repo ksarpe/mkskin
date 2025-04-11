@@ -170,9 +170,10 @@ def fetch_tokens(BASE_OAUTH_URL, API_BASE_URL):
                 print(f"Odświeżam token...")
                 response = refresh_access_token(BASE_OAUTH_URL)
                 if not response:
-                    exit()
-                ACCESS_TOKEN = f.readline().strip()
-                REFRESH_TOKEN = f.readline().strip()
+                    return
+                with open("tokens/tokens.txt", "r") as f2:
+                    ACCESS_TOKEN = f2.readline().strip()
+                    REFRESH_TOKEN = f2.readline().strip()
                 print("Odświeżono oba tokeny.")              
 
     
